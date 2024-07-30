@@ -7,9 +7,10 @@ import type {
   ProviderMessage,
 } from 'viem'
 
+import type { Transport } from '../createConfig.js'
 import type { Emitter } from '../createEmitter.js'
 import type { Storage } from '../createStorage.js'
-import type { Evaluate, ExactPartial, Omit } from '../types/utils.js'
+import type { Compute, ExactPartial, StrictOmit } from '../types/utils.js'
 
 export type ConnectorEventMap = {
   change: {
@@ -29,8 +30,9 @@ export type CreateConnectorFn<
 > = (config: {
   chains: readonly [Chain, ...Chain[]]
   emitter: Emitter<ConnectorEventMap>
-  storage?: Evaluate<Storage<storageItem>> | null | undefined
-}) => Evaluate<
+  storage?: Compute<Storage<storageItem>> | null | undefined
+  transports?: Record<number, Transport> | undefined
+}) => Compute<
   {
     readonly icon?: string | undefined
     readonly id: string
@@ -58,9 +60,9 @@ export type CreateConnectorFn<
     ): Promise<Client>
     isAuthorized(): Promise<boolean>
     switchChain?(
-      parameters: Evaluate<{
+      parameters: Compute<{
         addEthereumChainParameter?:
-          | ExactPartial<Omit<AddEthereumChainParameter, 'chainId'>>
+          | ExactPartial<StrictOmit<AddEthereumChainParameter, 'chainId'>>
           | undefined
         chainId: number
       }>,

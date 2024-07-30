@@ -8,13 +8,14 @@ import {
   type Connector,
   createConnector,
 } from '@wagmi/core'
-import type { Evaluate, Mutable, Omit } from '@wagmi/core/internal'
+import type { Compute, Mutable, Omit } from '@wagmi/core/internal'
 import type {
   CoinbaseWalletProvider as CBW_Provider,
   CoinbaseWalletSDK as CBW_SDK,
 } from 'cbw-sdk'
 import {
   type AddEthereumChainParameter,
+  type Hex,
   type ProviderRpcError,
   SwitchChainError,
   UserRejectedRequestError,
@@ -26,14 +27,14 @@ type Version = '3' | '4'
 
 export type CoinbaseWalletParameters<version extends Version = '3'> =
   version extends '4'
-    ? Evaluate<
+    ? Compute<
         {
           headlessMode?: false | undefined
           /** Coinbase Wallet SDK version */
           version?: version | '3' | undefined
         } & Version4Parameters
       >
-    : Evaluate<
+    : Compute<
         {
           /**
            * @deprecated `headlessMode` will be removed in the next major version. Upgrade to `version: '4'`.
@@ -125,7 +126,7 @@ function version4(parameters: Version4Parameters) {
         return { accounts, chainId: currentChainId }
       } catch (error) {
         if (
-          /(user closed modal|accounts received is empty|user denied account)/i.test(
+          /(user closed modal|accounts received is empty|user denied account|request rejected)/i.test(
             (error as Error).message,
           )
         )
@@ -162,7 +163,7 @@ function version4(parameters: Version4Parameters) {
     },
     async getChainId() {
       const provider = await this.getProvider()
-      const chainId = await provider.request<number>({
+      const chainId = await provider.request<Hex>({
         method: 'eth_chainId',
       })
       return Number(chainId)
@@ -171,17 +172,14 @@ function version4(parameters: Version4Parameters) {
       if (!walletProvider) {
         // Unwrapping import for Vite compatibility.
         // See: https://github.com/vitejs/vite/issues/9703
-        const { default: CoinbaseSDK_ } = await import('@coinbase/wallet-sdk')
-        const CoinbaseSDK = (() => {
-          if (
-            typeof CoinbaseSDK_ !== 'function' &&
-            typeof CoinbaseSDK_.default === 'function'
-          )
-            return CoinbaseSDK_.default
-          return CoinbaseSDK_ as unknown as typeof CoinbaseSDK_.default
+        const CoinbaseWalletSDK = await (async () => {
+          const { default: SDK } = await import('@coinbase/wallet-sdk')
+          if (typeof SDK !== 'function' && typeof SDK.default === 'function')
+            return SDK.default
+          return SDK as unknown as typeof SDK.default
         })()
 
-        sdk = new CoinbaseSDK({
+        sdk = new CoinbaseWalletSDK({
           ...parameters,
           appChainIds: config.chains.map((x) => x.id),
         })
@@ -399,17 +397,23 @@ function version3(parameters: Version3Parameters) {
     },
     async getChainId() {
       const provider = await this.getProvider()
-      const chainId = await provider.request<number>({ method: 'eth_chainId' })
+      const chainId = await provider.request<Hex>({
+        method: 'eth_chainId',
+      })
       return Number(chainId)
     },
     async getProvider() {
       if (!walletProvider) {
-        const { default: SDK_ } = await import('cbw-sdk')
-        let SDK: typeof SDK_.default
-        if (typeof SDK_ !== 'function' && typeof SDK_.default === 'function')
-          SDK = SDK_.default
-        else SDK = SDK_ as unknown as typeof SDK_.default
-        sdk = new SDK({ reloadOnDisconnect, ...parameters })
+        // Unwrapping import for Vite compatibility.
+        // See: https://github.com/vitejs/vite/issues/9703
+        const CoinbaseWalletSDK = await (async () => {
+          const { default: SDK } = await import('cbw-sdk')
+          if (typeof SDK !== 'function' && typeof SDK.default === 'function')
+            return SDK.default
+          return SDK as unknown as typeof SDK.default
+        })()
+
+        sdk = new CoinbaseWalletSDK({ ...parameters, reloadOnDisconnect })
 
         // Force types to retrieve private `walletExtension` method from the Coinbase Wallet SDK.
         const walletExtensionChainId = (

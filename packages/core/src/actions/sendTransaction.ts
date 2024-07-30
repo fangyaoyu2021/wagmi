@@ -1,6 +1,5 @@
 import type {
   Account,
-  Address,
   Chain,
   Client,
   TransactionRequest,
@@ -20,7 +19,7 @@ import type {
   ChainIdParameter,
   ConnectorParameter,
 } from '../types/properties.js'
-import type { Evaluate } from '../types/utils.js'
+import type { Compute } from '../types/utils.js'
 import { getAction } from '../utils/getAction.js'
 import { getAccount } from './getAccount.js'
 import {
@@ -35,15 +34,13 @@ export type SendTransactionParameters<
   ///
   chains extends readonly Chain[] = SelectChains<config, chainId>,
 > = {
-  [key in keyof chains]: Evaluate<
+  [key in keyof chains]: Compute<
     Omit<
       viem_SendTransactionParameters<chains[key], Account, chains[key]>,
       'chain' | 'gas'
     > &
       ChainIdParameter<config, chainId> &
-      ConnectorParameter & {
-        to: Address
-      }
+      ConnectorParameter
   >
 }[number] & {
   /** Gas provided for transaction execution, or `null` to skip the prelude gas estimation. */

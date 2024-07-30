@@ -1,7 +1,7 @@
 <script setup>
 const packageName = '@wagmi/core'
 const actionName = 'verifyMessage'
-const typeName = 'verifyMessage'
+const typeName = 'VerifyMessage'
 </script>
 
 # verifyMessage
@@ -185,7 +185,7 @@ import { type VerifyMessageReturnType } from '@wagmi/core'
 
 `boolean`
 
-Wheather the signed message is valid for the given address.
+Whether the signed message is valid for the given address.
 
 ## Error
 

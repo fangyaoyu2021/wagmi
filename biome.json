@@ -42,7 +42,7 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
-      "trailingComma": "all",
+      "trailingCommas": "all",
       "semicolons": "asNeeded"
     }
   },
@@ -61,7 +61,7 @@
       }
     },
     {
-      "include": ["./.scripts/**/*.ts"],
+      "include": ["./scripts/**/*.ts"],
       "linter": {
         "rules": {
           "suspicious": {

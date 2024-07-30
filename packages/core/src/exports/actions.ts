@@ -18,6 +18,13 @@ export {
 } from '../actions/connect.js'
 
 export {
+  type DeployContractErrorType,
+  type DeployContractParameters,
+  type DeployContractReturnType,
+  deployContract,
+} from '../actions/deployContract.js'
+
+export {
   type DisconnectErrorType,
   type DisconnectParameters,
   type DisconnectReturnType,
@@ -340,6 +347,12 @@ export {
   type WatchAccountReturnType,
   watchAccount,
 } from '../actions/watchAccount.js'
+
+export {
+  type WatchAssetParameters,
+  type WatchAssetReturnType,
+  watchAsset,
+} from '../actions/watchAsset.js'
 
 export {
   type WatchBlocksParameters,

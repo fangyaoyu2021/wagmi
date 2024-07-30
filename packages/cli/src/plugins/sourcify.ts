@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import type { ContractConfig } from '../config.js'
 import { fromZodError } from '../errors.js'
-import type { Evaluate } from '../types.js'
+import type { Compute } from '../types.js'
 import { fetch } from './fetch.js'
 
 export type SourcifyConfig<chainId extends number> = {
@@ -26,7 +26,7 @@ export type SourcifyConfig<chainId extends number> = {
   /**
    * Contracts to fetch ABIs for.
    */
-  contracts: Evaluate<Omit<ContractConfig<ChainId, chainId>, 'abi'>>[]
+  contracts: Compute<Omit<ContractConfig<ChainId, chainId>, 'abi'>>[]
 }
 
 const SourcifyResponse = z.object({
@@ -77,7 +77,7 @@ export function sourcify<chainId extends ChainId>(
 
       let contractAddress: Address | undefined
       if (typeof address === 'string') contractAddress = address
-      if (typeof address === 'object') contractAddress = address[chainId]
+      else if (typeof address === 'object') contractAddress = address[chainId]
 
       if (!contractAddress)
         throw new Error(

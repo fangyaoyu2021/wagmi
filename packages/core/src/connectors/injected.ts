@@ -17,21 +17,21 @@ import {
 import type { Connector } from '../createConfig.js'
 import { ChainNotConfiguredError } from '../errors/config.js'
 import { ProviderNotFoundError } from '../errors/connector.js'
-import type { Evaluate } from '../types/utils.js'
+import type { Compute } from '../types/utils.js'
 import { createConnector } from './createConnector.js'
 
 export type InjectedParameters = {
   /**
-   * MetaMask and other injected providers do not support programmatic disconnect.
-   * This flag simulates the disconnect behavior by keeping track of connection status in storage. See [GitHub issue](https://github.com/MetaMask/metamask-extension/issues/10353) for more info.
+   * Some injected providers do not support programmatic disconnect.
+   * This flag simulates the disconnect behavior by keeping track of connection status in storage.
    * @default true
    */
   shimDisconnect?: boolean | undefined
-  unstable_shimAsyncInject?: boolean | number | undefined
   /**
    * [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) Ethereum Provider to target
    */
   target?: TargetId | Target | (() => Target | undefined) | undefined
+  unstable_shimAsyncInject?: boolean | number | undefined
 }
 
 // Regex of wallets/providers that can accurately simulate contract calls & display contract revert reasons.
@@ -94,7 +94,7 @@ injected.type = 'injected' as const
 export function injected(parameters: InjectedParameters = {}) {
   const { shimDisconnect = true, unstable_shimAsyncInject } = parameters
 
-  function getTarget(): Evaluate<Target & { id: string }> {
+  function getTarget(): Compute<Target & { id: string }> {
     const target = parameters.target
     if (typeof target === 'function') {
       const result = target()
@@ -181,6 +181,13 @@ export function injected(parameters: InjectedParameters = {}) {
           accounts = (permissions[0]?.caveats?.[0]?.value as string[])?.map(
             (x) => getAddress(x),
           )
+          // `'wallet_requestPermissions'` can return a different order of accounts than `'eth_accounts'`
+          // switch to `'eth_accounts'` ordering if more than one account is connected
+          // https://github.com/wevm/wagmi/issues/4140
+          if (accounts.length > 0) {
+            const sortedAccounts = await this.getAccounts()
+            accounts = sortedAccounts
+          }
         } catch (err) {
           const error = err as RpcError
           // Not all injected providers support `wallet_requestPermissions` (e.g. MetaMask iOS).
@@ -268,16 +275,22 @@ export function injected(parameters: InjectedParameters = {}) {
       // Experimental support for MetaMask disconnect
       // https://github.com/MetaMask/metamask-improvement-proposals/blob/main/MIPs/mip-2.md
       try {
-        // TODO: Remove explicit type for viem@3
-        await provider.request<{
-          Method: 'wallet_revokePermissions'
-          Parameters: [permissions: { eth_accounts: Record<string, any> }]
-          ReturnType: null
-        }>({
-          // `'wallet_revokePermissions'` added in `viem@2.10.3`
-          method: 'wallet_revokePermissions',
-          params: [{ eth_accounts: {} }],
-        })
+        // Adding timeout as not all wallets support this method and can hang
+        // https://github.com/wevm/wagmi/issues/4064
+        await withTimeout(
+          () =>
+            // TODO: Remove explicit type for viem@3
+            provider.request<{
+              Method: 'wallet_revokePermissions'
+              Parameters: [permissions: { eth_accounts: Record<string, any> }]
+              ReturnType: null
+            }>({
+              // `'wallet_revokePermissions'` added in `viem@2.10.3`
+              method: 'wallet_revokePermissions',
+              params: [{ eth_accounts: {} }],
+            }),
+          { timeout: 100 },
+        )
       } catch {}
 
       // Add shim signalling connector is disconnected
@@ -383,13 +396,9 @@ export function injected(parameters: InjectedParameters = {}) {
           throw new ProviderNotFoundError()
         }
 
-        // We are applying a retry & timeout strategy here as some injected wallets (e.g. MetaMask) fail to
-        // immediately resolve a JSON-RPC request on page load.
-        const accounts = await withRetry(() =>
-          withTimeout(() => this.getAccounts(), {
-            timeout: 100,
-          }),
-        )
+        // Use retry strategy as some injected wallets (e.g. MetaMask) fail to
+        // immediately resolve JSON-RPC requests on page load.
+        const accounts = await withRetry(() => this.getAccounts())
         return !!accounts.length
       } catch {
         return false
@@ -580,7 +589,7 @@ type Target = {
 }
 
 /** @deprecated */
-type TargetId = Evaluate<WalletProviderFlags> extends `is${infer name}`
+type TargetId = Compute<WalletProviderFlags> extends `is${infer name}`
   ? name extends `${infer char}${infer rest}`
     ? `${Lowercase<char>}${rest}`
     : never
@@ -628,7 +637,7 @@ type WalletProviderFlags =
   | 'isXDEFI'
   | 'isZerion'
 
-type WalletProvider = Evaluate<
+type WalletProvider = Compute<
   EIP1193Provider & {
     [key in WalletProviderFlags]?: true | undefined
   } & {

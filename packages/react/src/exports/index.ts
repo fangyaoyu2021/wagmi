@@ -124,6 +124,12 @@ export {
 } from '../hooks/useConnectorClient.js'
 
 export {
+  type UseDeployContractParameters,
+  type UseDeployContractReturnType,
+  useDeployContract,
+} from '../hooks/useDeployContract.js'
+
+export {
   type UseDisconnectParameters,
   type UseDisconnectReturnType,
   useDisconnect,
@@ -335,6 +341,12 @@ export {
   type UseWaitForTransactionReceiptReturnType,
   useWaitForTransactionReceipt,
 } from '../hooks/useWaitForTransactionReceipt.js'
+
+export {
+  type UseWatchAssetParameters,
+  type UseWatchAssetReturnType,
+  useWatchAsset,
+} from '../hooks/useWatchAsset.js'
 
 export {
   type UseWatchBlocksParameters,

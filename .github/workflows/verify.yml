@@ -22,7 +22,7 @@ jobs:
         run: pnpm lint:repo
 
       - name: Lint code
-        run: pnpm format && pnpm lint:fix
+        run: pnpm lint
 
       - name: Update package versions
         run: pnpm version:update
@@ -55,7 +55,7 @@ jobs:
         run: pnpm test:build
 
       - name: Check for unused files, dependencies, and exports
-        run: pnpm knip --production --ignore-internal
+        run: pnpm knip --production
 
   types:
     name: Types
@@ -64,8 +64,8 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        typescript-version: ['5.0.4', '5.1.6', '5.2.2', '5.3.3', '5.4.5']
-        viem-version: ['2.9.31', 'latest']
+        typescript-version: ['5.0.4', '5.1.6', '5.2.2', '5.3.3', '5.4.5', '5.5.2']
+        viem-version: ['2.17.0', 'latest']
 
     steps:
       - name: Clone repository
@@ -114,9 +114,7 @@ jobs:
           max_attempts: 3
           timeout_minutes: 5
         env:
-          VITE_MAINNET_FORK_BLOCK_NUMBER: ${{ vars.VITE_MAINNET_FORK_BLOCK_NUMBER }}
           VITE_MAINNET_FORK_URL: ${{ secrets.VITE_MAINNET_FORK_URL }}
-          VITE_OPTIMISM_FORK_BLOCK_NUMBER: ${{ vars.VITE_OPTIMISM_FORK_BLOCK_NUMBER }}
           VITE_OPTIMISM_FORK_URL: ${{ secrets.VITE_OPTIMISM_FORK_URL }}
 
       - name: Upload coverage reports to Codecov

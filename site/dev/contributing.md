@@ -1,6 +1,7 @@
 <script setup>
 import packageJson from '../../package.json'
 
+const nodeVersion = packageJson.engines.node
 const packageManager = packageJson.packageManager
 </script>
 
@@ -34,23 +35,23 @@ gh repo clone wevm/wagmi
 
 ## 2. Installing Node.js and pnpm
 
-Wagmi uses [pnpm workspaces](https://pnpm.io/workspaces) to manage multiple projects. You need to install **Node.js v18 or higher** and **{{packageManager}}**.
-
-You can run the following commands in your terminal to check your local Node.js and pnpm versions:
+Wagmi uses Node.js with [pnpm workspaces](https://pnpm.io/workspaces) to manage multiple projects. You can run the following command in your terminal to check your local Node.js version.
 
 ```bash
 node -v
-pnpm -v
 ```
 
-If the versions are not correct or you don't have Node.js or pnpm installed, download and follow their setup instructions:
+If **`node@{{nodeVersion}}`** is not installed, you can install via [fnm](https://github.com/Schniz/fnm) or from the [official website](https://nodejs.org).
 
-- Install Node.js using [fnm](https://github.com/Schniz/fnm) or from the [official website](https://nodejs.org)
-- Install [pnpm](https://pnpm.io/installation)
+Once Node.js is installed, run the following to install [Corepack](https://nodejs.org/api/corepack.html). Corepack automatically installs and manages **`{{packageManager}}`**.
+
+```bash
+corepack enable
+```
 
 ## 3. Installing dependencies
 
-Once in the project's root directory, run the following command to install the project's dependencies:
+Once in the project's root directory, run the following command to install pnpm (via Corepack) and the project's dependencies:
 
 ```bash
 pnpm install
@@ -60,13 +61,10 @@ After the install completes, pnpm links packages across the project for developm
 
 ## 4. Adding the env variables
 
-The [dev playgrounds](#_5-running-the-dev-playgrounds) and [test suite](#_6-running-the-test-suite) require enironment variables to be set. Copy over the following environment variables to `.env`, and fill them out.
+The [dev playgrounds](#_5-running-the-dev-playgrounds) and [test suite](#_6-running-the-test-suite) require environment variables to be set. Copy over the following environment variables to `.env`, and fill them out.
 
 ```bash
-VITE_MAINNET_FORK_BLOCK_NUMBER=18677381
 VITE_MAINNET_FORK_URL=https://cloudflare-eth.com
-
-VITE_OPTIMISM_FORK_BLOCK_NUMBER=107317577
 VITE_OPTIMISM_FORK_URL=https://mainnet.optimism.io
 
 NEXT_PUBLIC_WC_PROJECT_ID=3fbb6bba6f1de962d911bb5b5c9dba88
@@ -77,7 +75,7 @@ NEXT_TELEMETRY_DISABLED=1
 NUXT_TELEMETRY_DISABLED=1
 ```
 
-`*_BLOCK_NUMBER` environment variables should remain set to the values above (the test suite depends on them), but you can change the others if you want. For example, you might want to change `*_FORK_URL` to a paid RPC provider for better performance.
+You might want to change `*_FORK_URL` to a paid RPC provider for better performance.
 
 ## 5. Running the dev playgrounds
 
@@ -98,7 +96,7 @@ Once a playground dev server is running, you can make changes to any of the pack
 
 ## 6. Running the test suite
 
-Wagmi uses [Vitest](https://vitest.dev) to run tests and [anvil.js](https://github.com/wevm/anvil.js) to execute tests against locally running chain forks. First, install [Anvil](https://github.com/foundry-rs/foundry/tree/master/anvil) via [Foundryup](https://book.getfoundry.sh/getting-started/installation).
+Wagmi uses [Vitest](https://vitest.dev) to run tests and [Prool](https://github.com/wevm/prool) to execute tests against locally running chain forks. First, install [Anvil](https://github.com/foundry-rs/foundry/tree/master/anvil) via [Foundryup](https://book.getfoundry.sh/getting-started/installation).
 
 ```bash
 curl -L https://foundry.paradigm.xyz | bash
@@ -118,7 +116,7 @@ When adding new features or fixing bugs, it's important to add test cases to cov
 
 ## 7. Writing documentation
 
-Documentation is crucial to helping developers of all experience levels use Wagmi. Wagmi uses [VitePress](https://vitepress.dev) for the documentation site (located at `./docs`). To start the site in dev mode, run:
+Documentation is crucial to helping developers of all experience levels use Wagmi. Wagmi uses [VitePress](https://vitepress.dev) for the documentation site (located at `./site`). To start the site in dev mode, run:
 
 ```bash
 pnpm docs:dev
@@ -166,8 +164,9 @@ If a PR has changesets, you can create a [snapshot release](https://github.com/c
 Use [Taze](https://github.com/antfu/taze) by running:
 
 ```bash
-pnpm deps    # prints outdated deps
-pnpm deps -w # updates deps (best done with clean working tree)
+pnpm deps       # prints outdated deps
+pnpm deps patch # print outdated deps with new patch versions
+pnpm deps -w    # updates deps (best done with clean working tree)
 ```
 
 [Socket](https://socket.dev) checks pull requests for vulnerabilities when new dependencies and versions are added, but you should also be vigilant! When updating dependencies, you should check release notes and source code as well as lock versions when possible.

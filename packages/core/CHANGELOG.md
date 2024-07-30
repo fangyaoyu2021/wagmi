@@ -1,5 +1,103 @@
 # @wagmi/core
 
+## 2.13.1
+
+### Patch Changes
+
+- [`07c1227f306d0efb9421d4bb77a774f92f5fcf45`](https://github.com/wevm/wagmi/commit/07c1227f306d0efb9421d4bb77a774f92f5fcf45) Thanks [@tmm](https://github.com/tmm)! - Fixed internal `extractRpcUrls` usage with `unstable_connector`.
+
+## 2.13.0
+
+### Minor Changes
+
+- [#4162](https://github.com/wevm/wagmi/pull/4162) [`a73a7737b756886b388f120ae423e72cca53e8a0`](https://github.com/wevm/wagmi/commit/a73a7737b756886b388f120ae423e72cca53e8a0) Thanks [@jxom](https://github.com/jxom)! - Added functionality for consumer-defined RPC URLs (`config.transports`) to be propagated to the WalletConnect & MetaMask Connectors.
+
+## 2.12.2
+
+### Patch Changes
+
+- [`5bc8c8877810b2eec24a829df87dce40a51e6f20`](https://github.com/wevm/wagmi/commit/5bc8c8877810b2eec24a829df87dce40a51e6f20) Thanks [@tmm](https://github.com/tmm)! - Fixed reconnection when `status` is defined.
+
+## 2.12.1
+
+### Patch Changes
+
+- [#4146](https://github.com/wevm/wagmi/pull/4146) [`cc996e08e930c9e88cf753a1e874652059e81a3b`](https://github.com/wevm/wagmi/commit/cc996e08e930c9e88cf753a1e874652059e81a3b) Thanks [@jxom](https://github.com/jxom)! - Updated `@safe-global/safe-apps-sdk` + `@safe-global/safe-apps-provider` dependencies.
+
+## 2.12.0
+
+### Minor Changes
+
+- [#4128](https://github.com/wevm/wagmi/pull/4128) [`5581a810ef70308e99c6f8b630cd4bca59f64afc`](https://github.com/wevm/wagmi/commit/5581a810ef70308e99c6f8b630cd4bca59f64afc) Thanks [@dalechyn](https://github.com/dalechyn)! - Added `watchAsset` action.
+
+## 2.11.8
+
+### Patch Changes
+
+- [`b08013eaa9ce97c02f8a7128ea400e3da7ef74bb`](https://github.com/wevm/wagmi/commit/b08013eaa9ce97c02f8a7128ea400e3da7ef74bb) Thanks [@tmm](https://github.com/tmm)! - Fixed injected accounts ordering for `'wallet_requestPermissions'`.
+
+- [`d3814ab4b88f9f0e052b53bc3d458df87b43f01d`](https://github.com/wevm/wagmi/commit/d3814ab4b88f9f0e052b53bc3d458df87b43f01d) Thanks [@jxom](https://github.com/jxom)! - Updated `mipd` dependency.
+
+## 2.11.7
+
+### Patch Changes
+
+- [`0bb8b562ae04ecfeb2d6b2f1b980ebae31dc127e`](https://github.com/wevm/wagmi/commit/0bb8b562ae04ecfeb2d6b2f1b980ebae31dc127e) Thanks [@tmm](https://github.com/tmm)! - Improved TypeScript `'exactOptionalPropertyTypes'` support.
+
+## 2.11.6
+
+### Patch Changes
+
+- [#4060](https://github.com/wevm/wagmi/pull/4060) [`95965c1f19d480b97f2b297a077a9e607dee32ad`](https://github.com/wevm/wagmi/commit/95965c1f19d480b97f2b297a077a9e607dee32ad) Thanks [@dalechyn](https://github.com/dalechyn)! - Bumped Tanstack Query dependencies to fix typing issues between exported Wagmi query options and TanStack Query suspense query methods (due to [`direction` property in `QueryFunctionContext` being deprecated](https://github.com/TanStack/query/pull/7410)).
+
+## 2.11.5
+
+### Patch Changes
+
+- [#4079](https://github.com/wevm/wagmi/pull/4079) [`04f2b846b113f3d300d82c9fa75212f1805817c5`](https://github.com/wevm/wagmi/commit/04f2b846b113f3d300d82c9fa75212f1805817c5) Thanks [@tmm](https://github.com/tmm)! - Added revalidation for config chain ID in SSR and migration.
+
+## 2.11.4
+
+### Patch Changes
+
+- [`9e8345cd56186b997b5e56deaa2cfc69b30d15f6`](https://github.com/wevm/wagmi/commit/9e8345cd56186b997b5e56deaa2cfc69b30d15f6) Thanks [@tmm](https://github.com/tmm)! - Switched `Register` to `interface` to fix declaration merging.
+
+## 2.11.3
+
+### Patch Changes
+
+- [#4065](https://github.com/wevm/wagmi/pull/4065) [`8974e6269bb5d7bfaa90db0246bc7d13e8bff798`](https://github.com/wevm/wagmi/commit/8974e6269bb5d7bfaa90db0246bc7d13e8bff798) Thanks [@alx-khramov](https://github.com/alx-khramov)! - Added timeout to internal call of `'wallet_revokePermissions'` request during `injected#disconnect` as some wallets that do not support this method hang.
+
+## 2.11.2
+
+### Patch Changes
+
+- [#4042](https://github.com/wevm/wagmi/pull/4042) [`b4d9ef79deb554ee20fed6666a474be5e7cdd522`](https://github.com/wevm/wagmi/commit/b4d9ef79deb554ee20fed6666a474be5e7cdd522) Thanks [@tmm](https://github.com/tmm)! - Removed `injected` connector `isAuthorized` timeout.
+
+## 2.11.1
+
+### Patch Changes
+
+- [`9c862d8d63e3d692a22cef2a90782b74a9103f17`](https://github.com/wevm/wagmi/commit/9c862d8d63e3d692a22cef2a90782b74a9103f17) Thanks [@tmm](https://github.com/tmm)! - Reverted internal module loading utility.
+
+## 2.11.0
+
+### Minor Changes
+
+- [#3816](https://github.com/wevm/wagmi/pull/3816) [`06bb598a7f04c7b167f5b7ff6d46bd15886a6a14`](https://github.com/wevm/wagmi/commit/06bb598a7f04c7b167f5b7ff6d46bd15886a6a14) Thanks [@marthendalnunes](https://github.com/marthendalnunes)! - Added `deployContract` action.
+
+### Patch Changes
+
+- [`24a45b269bd0214a29d6f82a84ac66ef8c3f3822`](https://github.com/wevm/wagmi/commit/24a45b269bd0214a29d6f82a84ac66ef8c3f3822) Thanks [@tmm](https://github.com/tmm)! - Added `SameSite` default to `cookieStorage`
+
+## 2.10.6
+
+### Patch Changes
+
+- [#4009](https://github.com/wevm/wagmi/pull/4009) [`f2a7cefab96691ebed8b8e45ffde071c47b58dbe`](https://github.com/wevm/wagmi/commit/f2a7cefab96691ebed8b8e45ffde071c47b58dbe) Thanks [@roninjin10](https://github.com/roninjin10)! - Marked `to` as optional for `sendTransaction`.
+
+- [#4023](https://github.com/wevm/wagmi/pull/4023) [`f0ea0b2a7fe193dadfeb49a4c8031ee451c638b5`](https://github.com/wevm/wagmi/commit/f0ea0b2a7fe193dadfeb49a4c8031ee451c638b5) Thanks [@jxom](https://github.com/jxom)! - Added chain check to `getConnectorClient` since it's possible for connection state chain ID to get out of sync with the connector (e.g. [wallet bug](https://github.com/MetaMask/metamask-extension/issues/25097)).
+
 ## 2.10.5
 
 ### Patch Changes
@@ -687,7 +785,7 @@
 
 - **Breaking:** Renamed `createClient` to `createConfig`
 - **Breaking:** Renamed `getClient` to `getConfig`
-- **Breaking:** Removed `request` as an argument to `prepareSendTransaction` & `sendTransation`. Arguments now belong on the root level of the Action.
+- **Breaking:** Removed `request` as an argument to `prepareSendTransaction` & `sendTransaction`. Arguments now belong on the root level of the Action.
 
 ### Patch Changes
 

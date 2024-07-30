@@ -3,8 +3,9 @@ import {
   type Connector,
   ProviderNotFoundError,
   createConnector,
+  extractRpcUrls,
 } from '@wagmi/core'
-import type { Evaluate, ExactPartial, Omit } from '@wagmi/core/internal'
+import type { Compute, ExactPartial, Omit } from '@wagmi/core/internal'
 import type { EthereumProvider } from '@walletconnect/ethereum-provider'
 import {
   type AddEthereumChainParameter,
@@ -25,7 +26,7 @@ type WalletConnectConnector = Connector & {
 
 type EthereumProviderOptions = Parameters<(typeof EthereumProvider)['init']>[0]
 
-export type WalletConnectParameters = Evaluate<
+export type WalletConnectParameters = Compute<
   {
     /**
      * If a new chain is added to a previously existing configured connector `chains`, this flag
@@ -249,10 +250,13 @@ export function walletConnect(parameters: WalletConnectParameters) {
           optionalChains,
           projectId: parameters.projectId,
           rpcMap: Object.fromEntries(
-            config.chains.map((chain) => [
-              chain.id,
-              chain.rpcUrls.default.http[0]!,
-            ]),
+            config.chains.map((chain) => {
+              const [url] = extractRpcUrls({
+                chain,
+                transports: config.transports,
+              })
+              return [chain.id, url]
+            }),
           ),
           showQrModal: parameters.showQrModal ?? true,
         })
@@ -303,7 +307,7 @@ export function walletConnect(parameters: WalletConnectParameters) {
           new Promise<void>((resolve) => {
             const listener = ({
               chainId: currentChainId,
-            }: { chainId?: number }) => {
+            }: { chainId?: number | undefined }) => {
               if (currentChainId === chainId) {
                 config.emitter.off('change', listener)
                 resolve()

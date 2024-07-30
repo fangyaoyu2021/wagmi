@@ -18,6 +18,13 @@ export {
 } from '../actions/connect.js'
 
 export {
+  type DeployContractErrorType,
+  type DeployContractParameters,
+  type DeployContractReturnType,
+  deployContract,
+} from '../actions/deployContract.js'
+
+export {
   type DisconnectErrorType,
   type DisconnectParameters,
   type DisconnectReturnType,
@@ -344,6 +351,13 @@ export {
 } from '../actions/watchAccount.js'
 
 export {
+  type WatchAssetParameters,
+  type WatchAssetErrorType,
+  type WatchAssetReturnType,
+  watchAsset,
+} from '../actions/watchAsset.js'
+
+export {
   type WatchBlocksParameters,
   type WatchBlocksReturnType,
   watchBlocks,
@@ -482,6 +496,8 @@ export {
   ConnectorNotFoundError,
   type ConnectorAccountNotFoundErrorType,
   ConnectorAccountNotFoundError,
+  type ConnectorChainMismatchErrorType,
+  ConnectorChainMismatchError,
 } from '../errors/config.js'
 
 export {
@@ -526,6 +542,8 @@ export {
 export { deepEqual } from '../utils/deepEqual.js'
 
 export { deserialize } from '../utils/deserialize.js'
+
+export { extractRpcUrls } from '../utils/extractRpcUrls.js'
 
 export { normalizeChainId } from '../utils/normalizeChainId.js'
 

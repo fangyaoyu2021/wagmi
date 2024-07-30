@@ -7,6 +7,7 @@ test('exports', () => {
     [
       "call",
       "connect",
+      "deployContract",
       "disconnect",
       "estimateGas",
       "estimateFeesPerGas",
@@ -62,6 +63,7 @@ test('exports', () => {
       "verifyMessage",
       "verifyTypedData",
       "watchAccount",
+      "watchAsset",
       "watchBlocks",
       "watchBlockNumber",
       "watchChainId",

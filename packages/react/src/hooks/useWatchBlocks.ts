@@ -6,7 +6,7 @@ import {
   type WatchBlocksParameters,
   watchBlocks,
 } from '@wagmi/core'
-import type { UnionEvaluate, UnionPartial } from '@wagmi/core/internal'
+import type { UnionCompute, UnionExactPartial } from '@wagmi/core/internal'
 import { useEffect } from 'react'
 import type { BlockTag } from 'viem'
 
@@ -20,8 +20,8 @@ export type UseWatchBlocksParameters<
   config extends Config = Config,
   chainId extends
     config['chains'][number]['id'] = config['chains'][number]['id'],
-> = UnionEvaluate<
-  UnionPartial<
+> = UnionCompute<
+  UnionExactPartial<
     WatchBlocksParameters<includeTransactions, blockTag, config, chainId>
   > &
     ConfigParameter<config> &
@@ -51,6 +51,8 @@ export function useWatchBlocks<
   const configChainId = useChainId({ config })
   const chainId = parameters.chainId ?? configChainId
 
+  // TODO(react@19): cleanup
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `rest` changes every render so only including properties in dependency array
   useEffect(() => {
     if (!enabled) return
     if (!onBlock) return
@@ -59,5 +61,19 @@ export function useWatchBlocks<
       chainId,
       onBlock,
     })
-  }, [chainId, config, enabled, onBlock, rest])
+  }, [
+    chainId,
+    config,
+    enabled,
+    onBlock,
+    ///
+    rest.blockTag,
+    rest.emitMissed,
+    rest.emitOnBegin,
+    rest.includeTransactions,
+    rest.onError,
+    rest.poll,
+    rest.pollingInterval,
+    rest.syncConnectedChain,
+  ])
 }

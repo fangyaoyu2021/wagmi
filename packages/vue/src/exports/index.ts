@@ -46,6 +46,12 @@ export {
 } from '../composables/useBlockNumber.js'
 
 export {
+  type UseBytecodeParameters,
+  type UseBytecodeReturnType,
+  useBytecode,
+} from '../composables/useBytecode.js'
+
+export {
   type UseChainIdParameters,
   type UseChainIdReturnType,
   useChainId,
@@ -226,6 +232,8 @@ export {
   ConnectorNotFoundError,
   type ConnectorAccountNotFoundErrorType,
   ConnectorAccountNotFoundError,
+  type ConnectorChainMismatchErrorType,
+  ConnectorChainMismatchError,
   type ProviderNotFoundErrorType,
   ProviderNotFoundError,
   type SwitchChainNotSupportedErrorType,

@@ -13,6 +13,8 @@ import type { ErrorType } from '../errors/base.js'
 import {
   ConnectorAccountNotFoundError,
   type ConnectorAccountNotFoundErrorType,
+  ConnectorChainMismatchError,
+  type ConnectorChainMismatchErrorType,
   ConnectorNotConnectedError,
   type ConnectorNotConnectedErrorType,
 } from '../errors/config.js'
@@ -20,13 +22,13 @@ import type {
   ChainIdParameter,
   ConnectorParameter,
 } from '../types/properties.js'
-import type { Evaluate } from '../types/utils.js'
+import type { Compute } from '../types/utils.js'
 
 export type GetConnectorClientParameters<
   config extends Config = Config,
   chainId extends
     config['chains'][number]['id'] = config['chains'][number]['id'],
-> = Evaluate<
+> = Compute<
   ChainIdParameter<config, chainId> &
     ConnectorParameter & {
       account?: Address | Account | undefined
@@ -37,7 +39,7 @@ export type GetConnectorClientReturnType<
   config extends Config = Config,
   chainId extends
     config['chains'][number]['id'] = config['chains'][number]['id'],
-> = Evaluate<
+> = Compute<
   Client<
     config['_internal']['transports'][chainId],
     Extract<config['chains'][number], { id: chainId }>,
@@ -47,6 +49,7 @@ export type GetConnectorClientReturnType<
 
 export type GetConnectorClientErrorType =
   | ConnectorAccountNotFoundErrorType
+  | ConnectorChainMismatchErrorType
   | ConnectorNotConnectedErrorType
   // base
   | BaseErrorType
@@ -78,11 +81,19 @@ export async function getConnectorClient<
 
   const chainId = parameters.chainId ?? connection.chainId
 
+  // Check connector using same chainId as connection
+  const connectorChainId = await connection.connector.getChainId()
+  if (connectorChainId !== connection.chainId)
+    throw new ConnectorChainMismatchError({
+      connectionChainId: connection.chainId,
+      connectorChainId,
+    })
+
   // If connector has custom `getClient` implementation
   type Return = GetConnectorClientReturnType<config, chainId>
   const connector = connection.connector
   if (connector.getClient)
-    return connector.getClient({ chainId: chainId }) as unknown as Return
+    return connector.getClient({ chainId }) as unknown as Return
 
   // Default using `custom` transport
   const account = parseAccount(parameters.account ?? connection.accounts[0]!)
@@ -93,7 +104,7 @@ export async function getConnectorClient<
     request(...args: any): Promise<any>
   }
 
-  // if account was provided, check that it exists on the connector
+  // If account was provided, check that it exists on the connector
   if (
     parameters.account &&
     !connection.accounts.some(

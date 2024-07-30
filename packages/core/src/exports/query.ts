@@ -21,6 +21,14 @@ export {
 } from '../query/connect.js'
 
 export {
+  type DeployContractData,
+  type DeployContractVariables,
+  type DeployContractMutate,
+  type DeployContractMutateAsync,
+  deployContractMutationOptions,
+} from '../query/deployContract.js'
+
+export {
   type DisconnectData,
   type DisconnectVariables,
   type DisconnectMutate,
@@ -363,6 +371,14 @@ export {
   waitForTransactionReceiptQueryKey,
   waitForTransactionReceiptQueryOptions,
 } from '../query/waitForTransactionReceipt.js'
+
+export {
+  type WatchAssetData,
+  type WatchAssetVariables,
+  type WatchAssetMutate,
+  type WatchAssetMutateAsync,
+  watchAssetMutationOptions,
+} from '../query/watchAsset.js'
 
 export {
   type WriteContractData,
